@@ -8,6 +8,11 @@ const port = process.env.PORT || 3000;
 app.use(express.static(path.join(__dirname, 'public')));
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
+// Ana sayfa route'u
+app.get('/', (req, res) => {
+    res.sendFile(path.join(__dirname, 'public', 'index.html'));
+});
+
 // Dosya listesi API endpoint'i
 app.get('/api/files', (req, res) => {
     const directoryPath = path.join(__dirname, 'uploads');
