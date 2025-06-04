@@ -9,15 +9,18 @@
   "routes": [
     {
       "src": "/",
-      "dest": "server.js"
+      "dest": "public/index.html"
     },
     {
       "src": "/api/files",
       "dest": "server.js"
     },
     {
-      "src": "/download/(.*)",
-      "dest": "server.js"
+      "src": "/uploads/(.*)",
+      "dest": "server.js?file=$1",
+      "headers": {
+        "Content-Disposition": "attachment"
+      }
     },
     {
       "src": "/(.*)",

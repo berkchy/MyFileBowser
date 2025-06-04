@@ -6,16 +6,7 @@ const port = process.env.PORT || 3000;
 
 // Middleware'ler
 app.use(express.static(path.join(__dirname, 'public')));
-app.use('/uploads', express.static(path.join(__dirname, 'uploads'), {
-    setHeaders: (res, filePath) => {
-        res.set('Content-Disposition', `attachment; filename="${path.basename(filePath)}"`);
-    }
-}));
-
-// Ana sayfa route'u
-app.get('/', (req, res) => {
-    res.sendFile(path.join(__dirname, 'public', 'index.html'));
-});
+app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
 // Dosya listesi API endpoint'i
 app.get('/api/files', (req, res) => {
@@ -41,7 +32,7 @@ app.get('/api/files', (req, res) => {
                     name: file,
                     date: stats.mtime.toLocaleString(),
                     size: formatFileSize(stats.size),
-                    path: `/uploads/${encodeURIComponent(file)}` // Güvenli URL
+                    path: `/uploads/${encodeURIComponent(file)}`
                 };
             } catch (error) {
                 console.error(`Dosya bilgisi alınamadı: ${file}`, error);
@@ -53,6 +44,21 @@ app.get('/api/files', (req, res) => {
     });
 });
 
+// Dosya indirme endpoint'i (Vercel için özel)
+app.get('/uploads/:filename', (req, res) => {
+    const filePath = path.join(__dirname, 'uploads', req.params.filename);
+    
+    if (fs.existsSync(filePath)) {
+        res.download(filePath, req.params.filename, {
+            headers: {
+                'Content-Disposition': `attachment; filename="${req.params.filename}"`
+            }
+        });
+    } else {
+        res.status(404).send('Dosya bulunamadı');
+    }
+});
+
 // Dosya boyutu formatlama
 function formatFileSize(bytes) {
     if (bytes === 0) return '0 Bytes';
@@ -62,12 +68,6 @@ function formatFileSize(bytes) {
     return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
 }
 
-// 404 Hatası
-app.use((req, res) => {
-    res.status(404).send('Sayfa bulunamadı');
-});
-
 app.listen(port, () => {
     console.log(`Sunucu http://localhost:${port} adresinde çalışıyor`);
-    console.log(`Dosyaların bulunduğu klasör: ${path.join(__dirname, 'uploads')}`);
 });
