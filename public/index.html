@@ -297,10 +297,11 @@
         document.addEventListener('click', function(e) {
             if (e.target.classList.contains('download-link')) {
                 e.preventDefault();
-                const url = e.target.getAttribute('href');
-                
-                // Yeni sekmede açarak indirme tetikleme
-                window.open(url, '_blank');
+                const filename = e.target.getAttribute('download');
+                const url = `/uploads/${encodeURIComponent(filename)}`;
+        
+                // Doğrudan indirme linkine yönlendir
+                window.location.href = url;
             }
         });
 
