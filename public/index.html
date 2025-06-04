@@ -3,33 +3,53 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Dosya Listesi | Modern Arayüz</title>
+    <title>Dosya Yöneticisi | Material You</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
     <style>
         :root {
-            --bg-color: #f8f9fa;
-            --card-bg: #ffffff;
-            --text-color: #212529;
-            --text-secondary: #6c757d;
-            --accent-color: #0d6efd;
-            --hover-color: #0b5ed7;
-            --border-color: #dee2e6;
-            --shadow: 0 2px 8px rgba(0,0,0,0.1);
+            --primary: #1a73e8;
+            --primary-container: #d3e3fd;
+            --on-primary: #ffffff;
+            --surface: #ffffff;
+            --surface-variant: #f5f5f5;
+            --on-surface: #1f1f1f;
+            --on-surface-variant: #5f6368;
+            --outline: #dadce0;
+            --shadow: 0 1px 2px rgba(0,0,0,0.1), 0 1px 3px rgba(0,0,0,0.1);
+            --elevation: 0 2px 6px rgba(0,0,0,0.1);
+            --rounding: 12px;
+            --rounding-sm: 8px;
+            --transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        @media (prefers-color-scheme: dark) {
+            :root {
+                --primary: #8ab4f8;
+                --primary-container: #1e3a8a;
+                --on-primary: #202124;
+                --surface: #202124;
+                --surface-variant: #2d2e30;
+                --on-surface: #e8eaed;
+                --on-surface-variant: #9aa0a6;
+                --outline: #3c4043;
+            }
         }
 
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            font-family: 'Roboto', -apple-system, BlinkMacSystemFont, sans-serif;
+            -webkit-tap-highlight-color: transparent;
         }
 
         body {
-            background-color: var(--bg-color);
-            color: var(--text-color);
-            line-height: 1.5;
+            background-color: var(--surface-variant);
+            color: var(--on-surface);
+            min-height: 100vh;
             padding: 16px;
-            -webkit-text-size-adjust: 100%;
+            line-height: 1.5;
         }
 
         .container {
@@ -38,56 +58,81 @@
             width: 100%;
         }
 
-        header {
-            margin-bottom: 24px;
-            display: flex;
-            flex-direction: column;
-            gap: 16px;
-        }
-
-        h1 {
-            font-size: 1.5rem;
-            font-weight: 600;
-            color: var(--text-color);
+        /* App Bar */
+        .app-bar {
             display: flex;
             align-items: center;
-            gap: 10px;
+            gap: 16px;
+            margin-bottom: 24px;
+            padding: 8px 0;
+        }
+
+        .app-title {
+            font-size: 1.5rem;
+            font-weight: 500;
+            color: var(--on-surface);
+            flex-grow: 1;
+        }
+
+        .app-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 20px;
+            background-color: var(--primary-container);
+            color: var(--primary);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+        }
+
+        /* Search */
+        .search-container {
+            position: relative;
+            margin-bottom: 16px;
         }
 
         .search-box {
-            display: flex;
-            align-items: center;
-            background: var(--card-bg);
-            border-radius: 8px;
-            padding: 10px 16px;
-            box-shadow: var(--shadow);
-            border: 1px solid var(--border-color);
-        }
-
-        .search-box input {
-            background: transparent;
-            border: none;
-            color: var(--text-color);
             width: 100%;
-            padding: 4px;
-            outline: none;
-            font-size: 0.95rem;
+            padding: 12px 16px;
+            padding-left: 48px;
+            border-radius: var(--rounding);
+            border: none;
+            background-color: var(--surface);
+            color: var(--on-surface);
+            font-size: 1rem;
+            box-shadow: var(--shadow);
+            transition: var(--transition);
         }
 
+        .search-box:focus {
+            outline: none;
+            box-shadow: 0 0 0 2px var(--primary);
+        }
+
+        .search-icon {
+            position: absolute;
+            left: 16px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--on-surface-variant);
+        }
+
+        /* File List */
         .file-list {
-            background: var(--card-bg);
-            border-radius: 8px;
-            box-shadow: var(--shadow);
+            background-color: var(--surface);
+            border-radius: var(--rounding);
+            box-shadow: var(--elevation);
             overflow: hidden;
-            border: 1px solid var(--border-color);
         }
 
         .file-item {
             display: flex;
             align-items: center;
             padding: 12px 16px;
-            border-bottom: 1px solid var(--border-color);
-            transition: background 0.2s;
+            border-bottom: 1px solid var(--outline);
+            transition: var(--transition);
+            cursor: pointer;
         }
 
         .file-item:last-child {
@@ -95,47 +140,46 @@
         }
 
         .file-item:hover {
-            background-color: rgba(13, 110, 253, 0.05);
+            background-color: rgba(0, 0, 0, 0.04);
         }
 
-        .file-icon {
-            margin-right: 12px;
-            color: var(--accent-color);
-            font-size: 1.1rem;
-            min-width: 24px;
-            text-align: center;
+        @media (prefers-color-scheme: dark) {
+            .file-item:hover {
+                background-color: rgba(255, 255, 255, 0.04);
+            }
+        }
+
+        .file-icon-container {
+            width: 40px;
+            height: 40px;
+            border-radius: var(--rounding-sm);
+            background-color: var(--primary-container);
+            color: var(--primary);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 16px;
+            flex-shrink: 0;
         }
 
         .file-info {
-            flex: 1;
-            min-width: 0; /* Bu satır text-overflow için kritik */
+            flex-grow: 1;
+            min-width: 0;
         }
 
         .file-name {
             font-weight: 500;
-            color: var(--text-color);
             white-space: nowrap;
             overflow: hidden;
             text-overflow: ellipsis;
-            display: block;
-        }
-
-        .file-name a {
-            color: inherit;
-            text-decoration: none;
-        }
-
-        .file-name a:hover {
-            text-decoration: underline;
-            color: var(--accent-color);
+            margin-bottom: 2px;
         }
 
         .file-meta {
             display: flex;
             gap: 12px;
-            margin-top: 4px;
-            font-size: 0.8rem;
-            color: var(--text-secondary);
+            font-size: 0.875rem;
+            color: var(--on-surface-variant);
         }
 
         .file-size {
@@ -146,31 +190,37 @@
             white-space: nowrap;
         }
 
+        /* Empty State */
         .empty-state {
-            text-align: center;
             padding: 40px 20px;
-            color: var(--text-secondary);
+            text-align: center;
+            color: var(--on-surface-variant);
         }
 
+        /* Footer */
         .footer {
             margin-top: 24px;
             text-align: center;
-            color: var(--text-secondary);
-            font-size: 0.8rem;
-            padding-top: 16px;
-            border-top: 1px solid var(--border-color);
+            color: var(--on-surface-variant);
+            font-size: 0.875rem;
         }
 
-        /* Mobil için optimize edilmiş stil */
+        /* Responsive */
         @media (max-width: 600px) {
-            body {
-                padding: 12px;
+            .app-bar {
+                margin-bottom: 16px;
             }
-
+            
             .file-item {
                 padding: 10px 12px;
             }
-
+            
+            .file-icon-container {
+                width: 36px;
+                height: 36px;
+                margin-right: 12px;
+            }
+            
             .file-meta {
                 flex-direction: column;
                 gap: 2px;
@@ -180,22 +230,26 @@
 </head>
 <body>
     <div class="container">
-        <header>
-            <h1><i class="fas fa-folder-open"></i> Dosya Listesi</h1>
-            <div class="search-box">
-                <i class="fas fa-search"></i>
-                <input type="text" placeholder="Dosya ara..." id="searchInput">
+        <div class="app-bar">
+            <div class="app-icon">
+                <i class="fas fa-folder-open"></i>
             </div>
-        </header>
+            <div class="app-title">Dosyalarım</div>
+        </div>
+
+        <div class="search-container">
+            <i class="fas fa-search search-icon"></i>
+            <input type="text" class="search-box" placeholder="Dosyalarda ara..." id="searchInput">
+        </div>
 
         <div class="file-list" id="fileList">
             <div class="empty-state">
-                <i class="fas fa-spinner fa-spin"></i> Dosyalar yükleniyor...
+                <i class="fas fa-spinner fa-spin"></i> Yükleniyor...
             </div>
         </div>
 
         <div class="footer">
-            <p>© <span id="currentYear"></span> Dosya Yöneticisi</p>
+            <p>© <span id="currentYear"></span> Material Files</p>
         </div>
     </div>
 
@@ -203,7 +257,7 @@
         // Yıl bilgisini güncelle
         document.getElementById('currentYear').textContent = new Date().getFullYear();
 
-        // Dosya ikonlarını belirleme
+        // Dosya ikonlarını belirleme (Material You renkleriyle uyumlu)
         function getFileIcon(filename) {
             const extension = filename.split('.').pop().toLowerCase();
             
@@ -213,27 +267,38 @@
                 'doc': 'fa-file-word', 'docx': 'fa-file-word',
                 'xls': 'fa-file-excel', 'xlsx': 'fa-file-excel',
                 'ppt': 'fa-file-powerpoint', 'pptx': 'fa-file-powerpoint',
-                'txt': 'fa-file-alt', 'log': 'fa-file-alt',
+                'txt': 'fa-file-alt', 'md': 'fa-file-alt',
                 
                 // Arşivler
-                'zip': 'fa-file-archive', 'rar': 'fa-file-archive', 
-                '7z': 'fa-file-archive', 'tar': 'fa-file-archive',
+                'zip': 'fa-file-zipper', 'rar': 'fa-file-zipper', 
+                '7z': 'fa-file-zipper', 'tar': 'fa-file-zipper',
+                'gz': 'fa-file-zipper',
                 
                 // Resimler
                 'jpg': 'fa-file-image', 'jpeg': 'fa-file-image',
                 'png': 'fa-file-image', 'gif': 'fa-file-image',
                 'svg': 'fa-file-image', 'webp': 'fa-file-image',
+                'heic': 'fa-file-image', 'bmp': 'fa-file-image',
                 
                 // Medya
                 'mp3': 'fa-file-audio', 'wav': 'fa-file-audio',
-                'mp4': 'fa-file-video', 'avi': 'fa-file-video',
+                'ogg': 'fa-file-audio', 'flac': 'fa-file-audio',
+                'mp4': 'fa-file-video', 'mov': 'fa-file-video',
+                'avi': 'fa-file-video', 'mkv': 'fa-file-video',
                 
                 // Kod
                 'html': 'fa-file-code', 'css': 'fa-file-code',
                 'js': 'fa-file-code', 'json': 'fa-file-code',
+                'php': 'fa-file-code', 'py': 'fa-file-code',
+                'java': 'fa-file-code', 'cpp': 'fa-file-code',
+                
+                // Veritabanı
+                'sql': 'fa-database', 'db': 'fa-database',
+                'sqlite': 'fa-database',
                 
                 // Diğer
-                'exe': 'fa-cog'
+                'exe': 'fa-gear', 'dmg': 'fa-window-maximize',
+                'apk': 'fa-mobile-screen'
             };
             
             return iconMap[extension] || 'fa-file';
@@ -246,19 +311,19 @@
             if (!fileArray || fileArray.length === 0) {
                 fileListElement.innerHTML = `
                     <div class="empty-state">
-                        <i class="fas fa-folder-open"></i> Klasör boş
+                        <i class="fas fa-folder-open"></i> Dosya bulunamadı
                     </div>
                 `;
                 return;
             }
 
             fileListElement.innerHTML = fileArray.map(file => `
-                <div class="file-item">
-                    <i class="fas ${getFileIcon(file.name)} file-icon"></i>
+                <div class="file-item" onclick="window.location.href='${file.path}'">
+                    <div class="file-icon-container">
+                        <i class="fas ${getFileIcon(file.name)}"></i>
+                    </div>
                     <div class="file-info">
-                        <span class="file-name" title="${file.name}">
-                            <a href="${file.path}" download="${file.name}">${file.name}</a>
-                        </span>
+                        <div class="file-name" title="${file.name}">${file.name}</div>
                         <div class="file-meta">
                             <span class="file-size">${file.size}</span>
                             <span class="file-date">${file.date}</span>
@@ -272,13 +337,13 @@
         async function fetchFiles() {
             try {
                 const response = await fetch('/api/files');
-                if (!response.ok) throw new Error('Dosya listesi alınamadı');
+                if (!response.ok) throw new Error('Dosyalar yüklenemedi');
                 const files = await response.json();
                 renderFileList(files);
             } catch (error) {
                 console.error('Hata:', error);
                 document.getElementById('fileList').innerHTML = `
-                    <div class="empty-state" style="color: #dc3545;">
+                    <div class="empty-state" style="color: #d93025;">
                         <i class="fas fa-exclamation-triangle"></i> ${error.message}
                     </div>
                 `;
