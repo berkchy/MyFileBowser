@@ -1,4 +1,3 @@
-// server.js
 const express = require('express');
 const fs = require('fs');
 const path = require('path');
@@ -7,17 +6,26 @@ const port = process.env.PORT || 3000;
 
 // Middleware'ler
 app.use(express.static(path.join(__dirname, 'public')));
-app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
+app.use('/uploads', express.static(path.join(__dirname, 'uploads'), {
+    setHeaders: (res, filePath) => {
+        res.set('Content-Disposition', `attachment; filename="${path.basename(filePath)}"`);
+    }
+}));
 
-// Ana sayfa route'u - index.html'i gönder
+// Ana sayfa route'u
 app.get('/', (req, res) => {
     res.sendFile(path.join(__dirname, 'public', 'index.html'));
 });
 
-// Dosya listesini döndüren endpoint
+// Dosya listesi API endpoint'i
 app.get('/api/files', (req, res) => {
     const directoryPath = path.join(__dirname, 'uploads');
     
+    if (!fs.existsSync(directoryPath)) {
+        fs.mkdirSync(directoryPath, { recursive: true });
+        return res.json([]);
+    }
+
     fs.readdir(directoryPath, (err, files) => {
         if (err) {
             console.error('Klasör okuma hatası:', err);
@@ -33,7 +41,7 @@ app.get('/api/files', (req, res) => {
                     name: file,
                     date: stats.mtime.toLocaleString(),
                     size: formatFileSize(stats.size),
-                    path: `/uploads/${file}` // İndirme linki
+                    path: `/uploads/${encodeURIComponent(file)}` // Güvenli URL
                 };
             } catch (error) {
                 console.error(`Dosya bilgisi alınamadı: ${file}`, error);
@@ -45,7 +53,7 @@ app.get('/api/files', (req, res) => {
     });
 });
 
-// Dosya boyutunu okunabilir formata çevirme
+// Dosya boyutu formatlama
 function formatFileSize(bytes) {
     if (bytes === 0) return '0 Bytes';
     const k = 1024;
@@ -56,15 +64,10 @@ function formatFileSize(bytes) {
 
 // 404 Hatası
 app.use((req, res) => {
-    res.status(404).sendFile(path.join(__dirname, 'public', '404.html'));
-});
-
-// Hata yönetimi
-app.use((err, req, res, next) => {
-    console.error(err.stack);
-    res.status(500).send('Bir hata oluştu!');
+    res.status(404).send('Sayfa bulunamadı');
 });
 
 app.listen(port, () => {
     console.log(`Sunucu http://localhost:${port} adresinde çalışıyor`);
+    console.log(`Dosyaların bulunduğu klasör: ${path.join(__dirname, 'uploads')}`);
 });
