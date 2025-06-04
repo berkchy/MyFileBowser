@@ -2,7 +2,7 @@
 <html lang="tr">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Dosya Listesi | Karanlık Tema</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
@@ -21,33 +21,43 @@
             padding: 0;
             box-sizing: border-box;
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        html {
+            font-size: 16px;
         }
 
         body {
             background-color: var(--bg-color);
             color: var(--text-color);
             line-height: 1.6;
-            padding: 20px;
+            padding: 15px;
+            touch-action: manipulation;
         }
 
         .container {
             max-width: 1200px;
             margin: 0 auto;
-            padding: 20px;
+            padding: 10px;
+            width: 100%;
         }
 
         header {
             display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 30px;
+            flex-direction: column;
+            gap: 15px;
+            margin-bottom: 20px;
             padding-bottom: 15px;
             border-bottom: 1px solid var(--border-color);
         }
 
         h1 {
-            font-size: 28px;
+            font-size: 1.5rem;
             color: var(--text-color);
+            display: flex;
+            align-items: center;
+            gap: 10px;
         }
 
         .search-box {
@@ -56,7 +66,7 @@
             background: var(--card-bg);
             border-radius: 5px;
             padding: 8px 15px;
-            width: 300px;
+            width: 100%;
         }
 
         .search-box input {
@@ -66,11 +76,7 @@
             width: 100%;
             padding: 5px;
             outline: none;
-        }
-
-        .search-box i {
-            color: var(--text-secondary);
-            margin-right: 10px;
+            font-size: 0.9rem;
         }
 
         .file-table {
@@ -79,7 +85,8 @@
             background: var(--card-bg);
             border-radius: 8px;
             overflow: hidden;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            font-size: 0.9rem;
         }
 
         .file-table thead {
@@ -88,14 +95,16 @@
         }
 
         .file-table th {
-            padding: 15px 20px;
+            padding: 12px 10px;
             text-align: left;
             font-weight: 600;
+            font-size: 0.85rem;
         }
 
         .file-table td {
-            padding: 12px 20px;
+            padding: 10px;
             border-bottom: 1px solid var(--border-color);
+            word-break: break-word;
         }
 
         .file-table tr:last-child td {
@@ -107,21 +116,28 @@
         }
 
         .file-icon {
-            margin-right: 10px;
-            width: 24px;
+            margin-right: 8px;
+            min-width: 20px;
             text-align: center;
             color: var(--accent-color);
+            font-size: 0.9rem;
         }
 
         .file-name {
             display: flex;
             align-items: center;
+            max-width: 100%;
         }
 
         .file-name a {
             color: var(--text-color);
             text-decoration: none;
             transition: color 0.2s;
+            display: inline-block;
+            max-width: 100%;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
         }
 
         .file-name a:hover {
@@ -131,55 +147,37 @@
 
         .file-size, .file-date {
             color: var(--text-secondary);
-            font-size: 14px;
-        }
-
-        .breadcrumb {
-            display: flex;
-            align-items: center;
-            margin-bottom: 20px;
-            color: var(--text-secondary);
-            font-size: 14px;
-        }
-
-        .breadcrumb a {
-            color: var(--text-secondary);
-            text-decoration: none;
-            transition: color 0.2s;
-        }
-
-        .breadcrumb a:hover {
-            color: var(--accent-color);
-        }
-
-        .breadcrumb i {
-            margin: 0 8px;
-            font-size: 12px;
+            font-size: 0.8rem;
+            white-space: nowrap;
         }
 
         .footer {
-            margin-top: 30px;
+            margin-top: 20px;
             text-align: center;
             color: var(--text-secondary);
-            font-size: 13px;
-            padding-top: 20px;
+            font-size: 0.8rem;
+            padding-top: 15px;
             border-top: 1px solid var(--border-color);
         }
 
-        @media (max-width: 768px) {
-            header {
-                flex-direction: column;
-                align-items: flex-start;
+        /* Mobil için özel stiller */
+        @media (max-width: 600px) {
+            html {
+                font-size: 14px;
             }
-
-            .search-box {
-                width: 100%;
-                margin-top: 15px;
+            
+            .file-table th, .file-table td {
+                padding: 8px 6px;
             }
+            
+            .file-date {
+                display: none;
+            }
+        }
 
-            .file-table {
-                display: block;
-                overflow-x: auto;
+        @media (min-width: 601px) and (max-width: 900px) {
+            html {
+                font-size: 15px;
             }
         }
     </style>
@@ -194,124 +192,117 @@
             </div>
         </header>
 
-        <div class="breadcrumb">
-            <a href="#"><i class="fas fa-home"></i> Ana Dizin</a>
-            <i class="fas fa-chevron-right"></i>
-            <span id="currentFolder">Yüklenenler</span>
-        </div>
-
         <table class="file-table">
             <thead>
                 <tr>
                     <th>Dosya Adı</th>
-                    <th>Yükleme Tarihi</th>
+                    <th class="file-date">Yükleme Tarihi</th>
                     <th>Boyut</th>
                 </tr>
             </thead>
             <tbody id="fileList">
-                <!-- Dosya listesi JavaScript ile eklenecek -->
+                <tr>
+                    <td colspan="3" style="text-align: center; color: var(--text-secondary);">
+                        <i class="fas fa-spinner fa-spin"></i> Dosyalar yükleniyor...
+                    </td>
+                </tr>
             </tbody>
         </table>
 
         <div class="footer">
-            <p>© 2023 Dosya Listeleme Arayüzü</p>
+            <p>© <span id="currentYear"></span> Dosya Listeleme Arayüzü</p>
         </div>
     </div>
 
     <script>
+        // Yıl bilgisini güncelle
+        document.getElementById('currentYear').textContent = new Date().getFullYear();
+
         // Dosya ikonlarını belirleme
         function getFileIcon(filename) {
             const extension = filename.split('.').pop().toLowerCase();
             
-            switch(extension) {
-                case 'pdf':
-                    return 'fa-file-pdf';
-                case 'doc':
-                case 'docx':
-                    return 'fa-file-word';
-                case 'xls':
-                case 'xlsx':
-                    return 'fa-file-excel';
-                case 'ppt':
-                case 'pptx':
-                    return 'fa-file-powerpoint';
-                case 'zip':
-                case 'rar':
-                case '7z':
-                case 'tar':
-                case 'gz':
-                    return 'fa-file-archive';
-                case 'jpg':
-                case 'jpeg':
-                case 'png':
-                case 'gif':
-                case 'svg':
-                case 'webp':
-                    return 'fa-file-image';
-                case 'mp3':
-                case 'wav':
-                case 'ogg':
-                case 'flac':
-                    return 'fa-file-audio';
-                case 'mp4':
-                case 'avi':
-                case 'mov':
-                case 'mkv':
-                case 'webm':
-                    return 'fa-file-video';
-                case 'html':
-                case 'htm':
-                    return 'fa-file-code';
-                case 'css':
-                    return 'fa-file-code';
-                case 'js':
-                    return 'fa-file-code';
-                case 'json':
-                    return 'fa-file-code';
-                case 'sql':
-                    return 'fa-database';
-                case 'txt':
-                case 'log':
-                    return 'fa-file-alt';
-                case 'exe':
-                case 'msi':
-                    return 'fa-cog';
-                default:
-                    return 'fa-file';
-            }
+            const iconMap = {
+                // Belgeler
+                'pdf': 'fa-file-pdf',
+                'doc': 'fa-file-word', 'docx': 'fa-file-word',
+                'xls': 'fa-file-excel', 'xlsx': 'fa-file-excel',
+                'ppt': 'fa-file-powerpoint', 'pptx': 'fa-file-powerpoint',
+                'txt': 'fa-file-alt', 'log': 'fa-file-alt',
+                'csv': 'fa-file-csv',
+                
+                // Arşivler
+                'zip': 'fa-file-archive', 'rar': 'fa-file-archive', 
+                '7z': 'fa-file-archive', 'tar': 'fa-file-archive',
+                'gz': 'fa-file-archive',
+                
+                // Resimler
+                'jpg': 'fa-file-image', 'jpeg': 'fa-file-image',
+                'png': 'fa-file-image', 'gif': 'fa-file-image',
+                'svg': 'fa-file-image', 'webp': 'fa-file-image',
+                
+                // Medya
+                'mp3': 'fa-file-audio', 'wav': 'fa-file-audio',
+                'ogg': 'fa-file-audio', 'flac': 'fa-file-audio',
+                'mp4': 'fa-file-video', 'avi': 'fa-file-video',
+                'mov': 'fa-file-video', 'mkv': 'fa-file-video',
+                'webm': 'fa-file-video',
+                
+                // Kod
+                'html': 'fa-file-code', 'htm': 'fa-file-code',
+                'css': 'fa-file-code', 'js': 'fa-file-code',
+                'json': 'fa-file-code', 'php': 'fa-file-code',
+                'py': 'fa-file-code', 'java': 'fa-file-code',
+                'cpp': 'fa-file-code', 'h': 'fa-file-code',
+                
+                // Veritabanı
+                'sql': 'fa-database', 'db': 'fa-database',
+                
+                // Diğer
+                'exe': 'fa-cog', 'msi': 'fa-cog',
+                'apk': 'fa-mobile-alt', 'dmg': 'fa-laptop'
+            };
+            
+            return iconMap[extension] || 'fa-file';
         }
 
         // Dosya listesini oluşturma
         function renderFileList(fileArray) {
             const fileListElement = document.getElementById('fileList');
-            fileListElement.innerHTML = '';
-
-            if (fileArray.length === 0) {
-                const row = document.createElement('tr');
-                row.innerHTML = `
-                    <td colspan="3" style="text-align: center; color: var(--text-secondary);">
-                        <i class="fas fa-folder-open"></i> Klasör boş
-                    </td>
+            
+            if (!fileArray || fileArray.length === 0) {
+                fileListElement.innerHTML = `
+                    <tr>
+                        <td colspan="3" style="text-align: center; color: var(--text-secondary);">
+                            <i class="fas fa-folder-open"></i> Klasör boş
+                        </td>
+                    </tr>
                 `;
-                fileListElement.appendChild(row);
                 return;
             }
 
-            fileArray.forEach(file => {
-                const iconClass = getFileIcon(file.name);
-                
-                const row = document.createElement('tr');
-                row.innerHTML = `
+            fileListElement.innerHTML = fileArray.map(file => `
+                <tr>
                     <td class="file-name">
-                        <i class="fas ${iconClass} file-icon"></i>
-                        <a href="${file.path}" download="${file.name}">${file.name}</a>
+                        <i class="fas ${getFileIcon(file.name)} file-icon"></i>
+                        <a href="${file.path}" download="${file.name}" class="download-link">${file.name}</a>
                     </td>
                     <td class="file-date">${file.date}</td>
                     <td class="file-size">${file.size}</td>
-                `;
-                fileListElement.appendChild(row);
-            });
+                </tr>
+            `).join('');
         }
+
+        // Dosya indirme işlemi
+        document.addEventListener('click', function(e) {
+            if (e.target.classList.contains('download-link')) {
+                e.preventDefault();
+                const url = e.target.getAttribute('href');
+                
+                // Yeni sekmede açarak indirme tetikleme
+                window.open(url, '_blank');
+            }
+        });
 
         // Sunucudan dosya listesini çekme
         async function fetchFiles() {
@@ -354,4 +345,4 @@
         document.addEventListener('DOMContentLoaded', fetchFiles);
     </script>
 </body>
-  </html>
+</html>
