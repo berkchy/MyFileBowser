@@ -1,0 +1,357 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dosya Listesi | Karanlık Tema</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --bg-color: #1a1a1a;
+            --card-bg: #2d2d2d;
+            --text-color: #e0e0e0;
+            --text-secondary: #b0b0b0;
+            --accent-color: #4a6fa5;
+            --hover-color: #3a5a8a;
+            --border-color: #444;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            line-height: 1.6;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        h1 {
+            font-size: 28px;
+            color: var(--text-color);
+        }
+
+        .search-box {
+            display: flex;
+            align-items: center;
+            background: var(--card-bg);
+            border-radius: 5px;
+            padding: 8px 15px;
+            width: 300px;
+        }
+
+        .search-box input {
+            background: transparent;
+            border: none;
+            color: var(--text-color);
+            width: 100%;
+            padding: 5px;
+            outline: none;
+        }
+
+        .search-box i {
+            color: var(--text-secondary);
+            margin-right: 10px;
+        }
+
+        .file-table {
+            width: 100%;
+            border-collapse: collapse;
+            background: var(--card-bg);
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .file-table thead {
+            background: var(--accent-color);
+            color: white;
+        }
+
+        .file-table th {
+            padding: 15px 20px;
+            text-align: left;
+            font-weight: 600;
+        }
+
+        .file-table td {
+            padding: 12px 20px;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .file-table tr:last-child td {
+            border-bottom: none;
+        }
+
+        .file-table tr:hover {
+            background: rgba(255, 255, 255, 0.05);
+        }
+
+        .file-icon {
+            margin-right: 10px;
+            width: 24px;
+            text-align: center;
+            color: var(--accent-color);
+        }
+
+        .file-name {
+            display: flex;
+            align-items: center;
+        }
+
+        .file-name a {
+            color: var(--text-color);
+            text-decoration: none;
+            transition: color 0.2s;
+        }
+
+        .file-name a:hover {
+            color: var(--accent-color);
+            text-decoration: underline;
+        }
+
+        .file-size, .file-date {
+            color: var(--text-secondary);
+            font-size: 14px;
+        }
+
+        .breadcrumb {
+            display: flex;
+            align-items: center;
+            margin-bottom: 20px;
+            color: var(--text-secondary);
+            font-size: 14px;
+        }
+
+        .breadcrumb a {
+            color: var(--text-secondary);
+            text-decoration: none;
+            transition: color 0.2s;
+        }
+
+        .breadcrumb a:hover {
+            color: var(--accent-color);
+        }
+
+        .breadcrumb i {
+            margin: 0 8px;
+            font-size: 12px;
+        }
+
+        .footer {
+            margin-top: 30px;
+            text-align: center;
+            color: var(--text-secondary);
+            font-size: 13px;
+            padding-top: 20px;
+            border-top: 1px solid var(--border-color);
+        }
+
+        @media (max-width: 768px) {
+            header {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .search-box {
+                width: 100%;
+                margin-top: 15px;
+            }
+
+            .file-table {
+                display: block;
+                overflow-x: auto;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1><i class="fas fa-folder-open"></i> Dosya Listesi</h1>
+            <div class="search-box">
+                <i class="fas fa-search"></i>
+                <input type="text" placeholder="Dosya ara..." id="searchInput">
+            </div>
+        </header>
+
+        <div class="breadcrumb">
+            <a href="#"><i class="fas fa-home"></i> Ana Dizin</a>
+            <i class="fas fa-chevron-right"></i>
+            <span id="currentFolder">Yüklenenler</span>
+        </div>
+
+        <table class="file-table">
+            <thead>
+                <tr>
+                    <th>Dosya Adı</th>
+                    <th>Yükleme Tarihi</th>
+                    <th>Boyut</th>
+                </tr>
+            </thead>
+            <tbody id="fileList">
+                <!-- Dosya listesi JavaScript ile eklenecek -->
+            </tbody>
+        </table>
+
+        <div class="footer">
+            <p>© 2023 Dosya Listeleme Arayüzü</p>
+        </div>
+    </div>
+
+    <script>
+        // Dosya ikonlarını belirleme
+        function getFileIcon(filename) {
+            const extension = filename.split('.').pop().toLowerCase();
+            
+            switch(extension) {
+                case 'pdf':
+                    return 'fa-file-pdf';
+                case 'doc':
+                case 'docx':
+                    return 'fa-file-word';
+                case 'xls':
+                case 'xlsx':
+                    return 'fa-file-excel';
+                case 'ppt':
+                case 'pptx':
+                    return 'fa-file-powerpoint';
+                case 'zip':
+                case 'rar':
+                case '7z':
+                case 'tar':
+                case 'gz':
+                    return 'fa-file-archive';
+                case 'jpg':
+                case 'jpeg':
+                case 'png':
+                case 'gif':
+                case 'svg':
+                case 'webp':
+                    return 'fa-file-image';
+                case 'mp3':
+                case 'wav':
+                case 'ogg':
+                case 'flac':
+                    return 'fa-file-audio';
+                case 'mp4':
+                case 'avi':
+                case 'mov':
+                case 'mkv':
+                case 'webm':
+                    return 'fa-file-video';
+                case 'html':
+                case 'htm':
+                    return 'fa-file-code';
+                case 'css':
+                    return 'fa-file-code';
+                case 'js':
+                    return 'fa-file-code';
+                case 'json':
+                    return 'fa-file-code';
+                case 'sql':
+                    return 'fa-database';
+                case 'txt':
+                case 'log':
+                    return 'fa-file-alt';
+                case 'exe':
+                case 'msi':
+                    return 'fa-cog';
+                default:
+                    return 'fa-file';
+            }
+        }
+
+        // Dosya listesini oluşturma
+        function renderFileList(fileArray) {
+            const fileListElement = document.getElementById('fileList');
+            fileListElement.innerHTML = '';
+
+            if (fileArray.length === 0) {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td colspan="3" style="text-align: center; color: var(--text-secondary);">
+                        <i class="fas fa-folder-open"></i> Klasör boş
+                    </td>
+                `;
+                fileListElement.appendChild(row);
+                return;
+            }
+
+            fileArray.forEach(file => {
+                const iconClass = getFileIcon(file.name);
+                
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td class="file-name">
+                        <i class="fas ${iconClass} file-icon"></i>
+                        <a href="${file.path}" download="${file.name}">${file.name}</a>
+                    </td>
+                    <td class="file-date">${file.date}</td>
+                    <td class="file-size">${file.size}</td>
+                `;
+                fileListElement.appendChild(row);
+            });
+        }
+
+        // Sunucudan dosya listesini çekme
+        async function fetchFiles() {
+            try {
+                const response = await fetch('/api/files');
+                if (!response.ok) {
+                    throw new Error('Dosya listesi alınamadı');
+                }
+                const files = await response.json();
+                renderFileList(files);
+            } catch (error) {
+                console.error('Hata:', error);
+                const fileListElement = document.getElementById('fileList');
+                fileListElement.innerHTML = `
+                    <tr>
+                        <td colspan="3" style="text-align: center; color: #ff6b6b;">
+                            <i class="fas fa-exclamation-triangle"></i> ${error.message}
+                        </td>
+                    </tr>
+                `;
+            }
+        }
+
+        // Arama fonksiyonu
+        document.getElementById('searchInput').addEventListener('input', async function(e) {
+            const searchTerm = e.target.value.toLowerCase();
+            try {
+                const response = await fetch('/api/files');
+                const allFiles = await response.json();
+                const filteredFiles = allFiles.filter(file => 
+                    file.name.toLowerCase().includes(searchTerm)
+                );
+                renderFileList(filteredFiles);
+            } catch (error) {
+                console.error('Arama hatası:', error);
+            }
+        });
+
+        // Sayfa yüklendiğinde dosya listesini çek
+        document.addEventListener('DOMContentLoaded', fetchFiles);
+    </script>
+</body>
+  </html>
